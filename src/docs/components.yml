@@ -1,0 +1,139 @@
+components:
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 17
+        name:
+          type: string
+          example: Staff 9
+        username:
+          type: string
+          example: staff9
+        updatedAt:
+          type: string
+          example: 2022-07-13T12:03:41.333Z
+        createdAt:
+          type: string
+          example: 2022-07-13T12:03:41.333Z
+
+    User:
+      type: object
+      required:
+        - name
+        - username
+        - password
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+          description: must be unique
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: At least one number and one letter
+        roles:
+          type: array
+          description: Roles of the user. "staff" for a staff user, "admin" for admin user. If not provided default role of the user created will be "staff"
+          example: ["staff", "admin"]
+      example:
+        name: fake name
+        username: fake-username
+        password: Password@22
+        roles: ["staff", "admin"]
+
+    Schedule:
+      type: object
+      required:
+        - workDate
+        - username
+        - shiftLength
+      properties:
+        workDate: 
+          type: string
+          format: date
+          example: 2022-05-01
+        shiftLength: 
+          type: number
+          example: 16
+        username: 
+          type: string
+          example: staff4
+      example:
+        username: staff4
+        workDate: 2022-05-01
+        shiftLength: 8       
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+  responses:
+    DuplicateUsername:
+      description: Username already taken
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 409
+            message: Username already taken
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 401
+            message: Incorrect username or password
+    TokenUnauthorized:
+      description: Token not authorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 401
+            message: Token not authorized
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 403
+            message: Forbidden
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 404
+            message: Not found
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 400
+            message: Bad Request
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  mysql_db_container:
+    platform: linux/x86_64
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    # env_file: ./.env
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: scheduling_db
+      # - MYSQL_USER: "${MYSQLDB_USER}"
+      # - MYSQL_ROOT_PASSWORD: "${MYSQLDB_ROOT_PASSWORD}"
+      # - MYSQL_DATABASE: "${MYSQLDB_DATABASE}"
+    ports:
+      - 3306:3306
+      # - "${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}"
+    volumes:
+      - mysql_db_data_container:/var/lib/mysql
+
+  adminer_container:
+    image: adminer:latest
+    # restart: always
+    # env_file: ./.env
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql_db_container
+    #   - ADMINER_DEFAULT_SERVER: "mysql_db_container"
+    #   # - ADMINER_DESIGN=$ADMINER_DESIGN    
+    ports:
+      - 8080:8080
+      # - "${ADMINER_LOCAL_PORT}:${ADMINER_DOCKER_PORT}"
+      
+
+  # app:
+  #   depends_on:
+  #     - mysqldb
+  #   build: ./scheduling-app
+  #   restart: unless-stopped
+  #   env_file: ./.env
+  #   ports:
+  #     - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+  #   environment:
+  #     - DB_HOST=mysqldb
+  #     - DB_USER=$MYSQLDB_USER
+  #     - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+  #     - DB_NAME=$MYSQLDB_DATABASE
+  #     - DB_PORT=$MYSQLDB_DOCKER_PORT
+  #   stdin_open: true
+  #   tty: true
+  #   # volumes:
+  #   # - ./scheduling-app:./
+
+volumes: 
+  mysql_db_data_container:

@@ -1,0 +1,242 @@
+openapi: 3.0.1
+tags:
+  - name: Schedules
+    description: Schedules API
+paths:
+  /schedules:
+    post:
+      summary: Create user schedule.
+      description: Only admins can create user schedule.
+      tags: [Schedules]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Schedule"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schedule:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 16
+                      workDate:
+                        type: string
+                        format: date
+                        example: 2022-05-01
+                      shiftLength:
+                        type: number
+                        example: 16
+                      completed:
+                        type: boolean
+                      UserId:
+                        type: number
+                        example: 12
+                      updatedAt:
+                        type: string
+                        example: 2022-07-13T04:13:15.052Z
+                      createdAt:
+                        type: string
+                        example: 2022-07-13T04:13:15.052Z
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    get:
+      summary: Get all schedules of a specific user, for a period of time (Up to 1 year).
+      description: Staffs and admins can retrieve schedules of any user.
+      tags: [Schedules]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: number
+            example: 2
+          description: User's id
+        - in: query
+          name: startDate
+          required: true
+          schema:
+            type: string
+            example: 2022-01-01
+          description: Initial date of the period of time
+        - in: query
+          name: endDate
+          required: true
+          schema:
+            type: string
+            example: 2022-07-01
+          description: Last date of the period of time
+        - in: query
+          name: size
+          schema:
+            type: integer
+            minimum: 1
+          default: 10
+          description: Maximum number of users
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 4
+                        username:
+                          type: string
+                          example: staff3
+                        name:
+                          type: string
+                          example: Staff user 3
+                        workHours:
+                          type: string
+                          example: 48
+                  totalItems:
+                    type: number
+                    example: 100
+                  totalPages:
+                    type: number
+                    example: 10
+                  size:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: string
+                    example: 1
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /schedules/{id}:
+    patch:
+      summary: "Update user's schedule"
+      description: Only admins can edit user's schedule.
+      tags: [Schedules]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User's schedule id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workDate:
+                  type: string
+                  format: date
+                  example: 2022-01-02
+                shiftLength:
+                  type: number
+                  example: 16
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/Schedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: Delete user's schedule
+      description: Only admins can delete a user's schedule.
+      tags: [Schedules]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User's schedule id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: No content
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    get:
+      summary: Get a user's schedule by id
+      description: Only admins can fetch any user's schedule by id.
+      tags: [Schedules]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User's schedule id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/Schedule"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"

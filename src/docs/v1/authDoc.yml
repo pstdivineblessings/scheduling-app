@@ -1,0 +1,162 @@
+openapi: 3.0.1
+tags:
+  - name: Auth
+    description: Authentification API
+paths:
+  /auth/signup:
+    post:
+      summary: Signup a new staff user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - username
+                - password
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                  description: must be unique
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: At least one number and one letter
+              example:
+                name: fake name
+                username: fake-username
+                password: Password@22
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/UserResponse"
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InN0YWZmOSIsInJvbGVzIjpbInN0YWZmIl19LCJpYXQiOjE2NTc3MTM4MjEsImV4cCI6MTY1NzcxNDcyMX0.QAA4jN_Zx4Rez4sOPFyQaaUOoAX8xlhcjvvDOpClrAI
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN0YWZmOSIsImlhdCI6MTY1NzcxMzgyMSwiZXhwIjoxNjYwMzA1ODIxfQ.CfV6rTiPiJ7O2mtxxJbeQ2ELcWwSB9u6-Wgm2wbxfOU
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DuplicateUsername"
+  
+  /auth/signin:
+    post:
+      summary: Signin a user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+              example:
+                username: fake-username
+                password: Password@22
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InN0YWZmOSIsInJvbGVzIjpbInN0YWZmIl19LCJpYXQiOjE2NTc3MTM4MjEsImV4cCI6MTY1NzcxNDcyMX0.QAA4jN_Zx4Rez4sOPFyQaaUOoAX8xlhcjvvDOpClrAI
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InN0YWZmOSIsInJvbGVzIjpbInN0YWZmIl19LCJpYXQiOjE2NTc3MTM4MjEsImV4cCI6MTY1NzcxNDcyMX0.QAA4jN_Zx4Rez4sOPFyQaaUOoAX8xlhcjvvDOpClrAI
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  
+  /auth/signout:
+    post:
+      summary: Signout a user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+              example:
+                refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InN0YWZmOSIsInJvbGVzIjpbInN0YWZmIl19LCJpYXQiOjE2NTc3MTM4MjEsImV4cCI6MTY1NzcxNDcyMX0.QAA4jN_Zx4Rez4sOPFyQaaUOoAX8xlhcjvvDOpClrAI
+      responses:
+        "204":
+          description: No content
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auth/refresh-token:
+    post:
+      summary: Refresh Access Token
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+              example:
+                refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InN0YWZmOSIsInJvbGVzIjpbInN0YWZmIl19LCJpYXQiOjE2NTc3MTM4MjEsImV4cCI6MTY1NzcxNDcyMX0.QAA4jN_Zx4Rez4sOPFyQaaUOoAX8xlhcjvvDOpClrAI
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InN0YWZmOSIsInJvbGVzIjpbInN0YWZmIl19LCJpYXQiOjE2NTc3MTM4MjEsImV4cCI6MTY1NzcxNDcyMX0.QAA4jN_Zx4Rez4sOPFyQaaUOoAX8xlhcjvvDOpClrAI
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/TokenUnauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+

@@ -1,0 +1,211 @@
+openapi: 3.0.1
+tags:
+  - name: Users
+    description: Users API
+paths:
+  /users:
+    post:
+      summary: Create staff or admin user.
+      description: Only admins can create users.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DuplicateUsername"
+
+    get:
+      summary: Get all users, list by accumulated work hours for a period of time (Up to 1 year).
+      description: Only admins can retrieve all users.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: startDate
+          required: true
+          schema:
+            type: string
+            example: 2022-01-01
+          description: Initial date of the period of time
+        - in: query
+          name: endDate
+          required: true
+          schema:
+            type: string
+            example: 2022-07-01
+          description: Last date of the period of time
+        - in: query
+          name: size
+          schema:
+            type: integer
+            minimum: 1
+          default: 10
+          description: Maximum number of users
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 4
+                        username:
+                          type: string
+                          example: staff3
+                        name:
+                          type: string
+                          example: Staff user 3
+                        workHours:
+                          type: string
+                          example: 48
+                  totalItems:
+                    type: number
+                    example: 100
+                  totalPages:
+                    type: number
+                    example: 10
+                  size:
+                    type: integer
+                    example: 10
+                  currentPage:
+                    type: string
+                    example: 1
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /users/{id}:
+    patch:
+      summary: "Update user"
+      description: Only admins can edit user.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/DuplicateUsername"
+
+    delete:
+      summary: Delete a user
+      description: Only admins can delete a user.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: No content
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+   
+    get:
+      summary: Get a user
+      description: Only admins can fetch a user.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: User id
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/UserResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
