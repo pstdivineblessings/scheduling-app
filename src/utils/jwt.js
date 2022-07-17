@@ -1,13 +1,13 @@
 const config = require("../config/config");
 const jwt = require("jsonwebtoken");
 
-const generateTokens = (user, roles) => {
+const generateTokens = (user) => {
   // create accessToken
   const accessToken = jwt.sign(
     {
       UserInfo: {
         username: user.username,
-        roles: roles,
+        role: user.role,
       },
     },
     config.jwt.accessTokenSecret,

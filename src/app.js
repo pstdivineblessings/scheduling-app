@@ -19,9 +19,6 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
 
-// // custom middleware logger
-// app.use(logger);
-
 // Handle options credentials check - before CORS!
 // and fetch cookies credentials requirement
 app.use(credentials);
@@ -38,28 +35,12 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json
 app.use(express.json());
 
-//middleware for cookies
-app.use(cookieParser());
+// //middleware for cookies
+// app.use(cookieParser());
 
-// db.sequelize.sync({ alter: true }).then(() => {
-//     console.log("Alter and re-sync db.");
-//   });
 
 // v1 api routes
 app.use("/v1", routes);
-
-// app.all("*", (req, res) => {
-//   res.status(404);
-//   if (req.accepts("html")) {
-//     res.sendFile(path.join(__dirname, "views", "404.html"));
-//   } else if (req.accepts("json")) {
-//     res.json({ error: "404 Not Found" });
-//   } else {
-//     res.type("txt").send("404 Not Found");
-//   }
-// });
-
-// app.use(errorHandler);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {

@@ -1,6 +1,4 @@
-const { DataTypes } = require("sequelize");
-
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
     {
@@ -18,12 +16,17 @@ module.exports = (sequelize) => {
         allowNull: false,
         unique: true,
       },
+      role: {
+        type: DataTypes.ENUM,
+        allowNull: false,
+        values: ["staff", "admin"]
+      },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate:{
-          min: 8
-        }
+        validate: {
+          min: 8,
+        },
       },
       refreshToken: {
         type: DataTypes.TEXT,
@@ -42,6 +45,14 @@ module.exports = (sequelize) => {
       },
     }
   );
+
+  User.associate = function (models) {
+    User.hasMany(models.Schedule, {
+      foreignKey: {
+        allowNull: false,
+      },
+    });
+  };
 
   return User;
 };

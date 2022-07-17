@@ -1,6 +1,4 @@
-const { DataTypes } = require("sequelize");
-
-module.exports = (sequelize) => {
+module.exports = (sequelize, DataTypes) => {
   const Schedule = sequelize.define("Schedule", {
     id: {
       type: DataTypes.INTEGER,
@@ -14,13 +12,17 @@ module.exports = (sequelize) => {
     shiftLength: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },    
+    },
     completed: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
   });
+
+  Schedule.associate = function (models) {
+    Schedule.belongsTo(models.User);
+  };
 
   return Schedule;
 };
