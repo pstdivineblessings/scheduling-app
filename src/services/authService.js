@@ -24,12 +24,8 @@ const signin = async (username, password) => {
     );
   }
 
-  // getting user roles
-  let roles = await foundUser.getRoles();
-  roles = roles.map((role) => role.name);
-
   //getting JWT Tokens
-  const { accessToken, refreshToken } = generateTokens(foundUser, roles);
+  const { accessToken, refreshToken } = generateTokens(foundUser);
 
   // Saving refreshToken with current user
   foundUser.refreshToken = refreshToken;
@@ -79,14 +75,11 @@ const refreshToken = async (refreshToken) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Token not authorized");
   }
 
-  let roles = await foundUser.getRoles();
-  roles = roles.map((role) => role.name);
-
   const accessToken = jwt.sign(
     {
       UserInfo: {
         username: decoded.username,
-        roles: roles,
+        role: foundUser.role,
       },
     },
     config.jwt.accessTokenSecret,
@@ -102,5 +95,4 @@ module.exports = {
   signin,
   signout,
   refreshToken,
-  generateTokens,
 };

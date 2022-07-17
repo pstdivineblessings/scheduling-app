@@ -9,7 +9,7 @@ const {
   isUptoOneYear,
 } = require("../utils/utils");
 const db = require("../models");
-const { User, Role } = db;
+const { User } = db;
 const sq = db.sequelize;
 const { QueryTypes, Op } = require("sequelize");
 const { generateTokens } = require("../utils/jwt");
@@ -42,21 +42,6 @@ const isPasswordMatch = async (password1, password2) => {
   return bcrypt.compare(password1, password2);
 };
 
-/**
- * Setting user roles
- * @param {User} user
- * @param {array<string>} roles
- */
-const settingUserRoles = (user, roles) => {
-  roles.forEach(async (role) => {
-    const userRole = await Role.findOne({
-      where: {
-        name: role,
-      },
-    });
-    if (userRole) result = await user.addRole(userRole);
-  });
-};
 
 /**
  * Get a new user
@@ -78,7 +63,8 @@ const createNew = async (userData) => {
   }
 
   //encrypt the password
-  const hashedPwd = await bcrypt.hash(password, 10);
+  const salt = bcrypt.genSaltSync(8);
+  const hashedPwd = await bcrypt.hash(password, salt);
 
   const newUser = await User.create({
     ...userData,
@@ -94,16 +80,13 @@ const createNew = async (userData) => {
  * @returns {Object}
  */
 const signup = async (userData) => {
-  const roles = [ROLES.Staff];
+  userData.role  = ROLES.Staff
 
   //Getting Tokens
-  const { accessToken, refreshToken } = generateTokens(userData, roles);
+  const { accessToken, refreshToken } = generateTokens(userData);
 
   userData.refreshToken = refreshToken;
   const newUser = await createNew(userData);
-
-  //Setting default roles
-  settingUserRoles(newUser, roles);
 
   const data = newUser.toJSON();
   delete data.password;
@@ -120,13 +103,8 @@ const signup = async (userData) => {
 const create = async (userData) => {
   const newUser = await createNew(userData);
 
-  let { roles } = userData;
-
-  if (!roles) {
-    roles = [ROLES.Staff];
-  }
-
-  settingUserRoles(newUser, roles);
+  //Saving in the DB
+  await newUser.save();
 
   const data = newUser.toJSON();
   delete data.password;
@@ -143,7 +121,6 @@ const create = async (userData) => {
 const updateUserById = async (userId, updateBody) => {
   let userToUpdate = await User.findOne({
     where: { id: userId },
-    include: Role,
   });
 
   //if user found
@@ -154,7 +131,7 @@ const updateUserById = async (userId, updateBody) => {
     );
   }
 
-  const { username, roles, password } = updateBody;
+  const { username, password } = updateBody;
 
   if (username) {
     // check for duplicate usernames in the db
@@ -177,7 +154,8 @@ const updateUserById = async (userId, updateBody) => {
 
   if (password) {
     //encrypt the password
-    const hashedPwd = await bcrypt.hash(password, 10);
+    const salt = bcrypt.genSaltSync(8);
+    const hashedPwd = await bcrypt.hash(password, salt);
     updateBody.password = hashedPwd;
   }
 
@@ -186,27 +164,8 @@ const updateUserById = async (userId, updateBody) => {
     await userToUpdate.save();
   }
 
-  if (roles) {
-    // removing previous roles
-    let currentRoles = await userToUpdate.getRoles();
-    currentRoles.forEach(async (role) => {
-      await userToUpdate.removeRole(role);
-    });
-
-    //Adding new roles
-    settingUserRoles(userToUpdate, roles);
-  }
-
-  // const data = await getUserById(userId);
-
-  const data = await User.findOne({
-    where: { id: userId },
-    include: Role,
-  });
-
-  // const data = userToUpdate;
-  // const data = userToUpdate.toJSON();
-  // delete data.password;
+  const data = userToUpdate.toJSON();
+  delete data.password;
 
   return data;
 };
@@ -272,7 +231,7 @@ const queryUsers = async (options) => {
  * @returns
  */
 const getUserById = async (id) => {
-  const user = await User.findOne({ where: { id }, include: Role });
+  const user = await User.findOne({ where: { id } });
 
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, "No user found with id=" + id);
