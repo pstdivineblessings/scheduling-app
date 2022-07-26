@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  nodejs:
+    container_name: nodejs-app-prod
+    command: yarn start

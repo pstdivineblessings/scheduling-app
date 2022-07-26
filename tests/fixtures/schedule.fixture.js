@@ -17,14 +17,6 @@ const staff1Schedule2 = {
   completed: true,
 };
 
-const staff1Schedule3 = {
-  id: 3,
-  workDate: "2022-03-01",
-  shiftLength: 8,
-  UserId: staff1.id,
-  completed: true,
-};
-
 const staff2Schedule1 = {
   id: 4,
   workDate: "2022-01-01",
@@ -36,14 +28,6 @@ const staff2Schedule1 = {
 const staff2Schedule2 = {
   id: 5,
   workDate: "2022-02-01",
-  shiftLength: 8,
-  UserId: staff2.id,
-  completed: true,
-};
-
-const staff2Schedule3 = {
-  id: 6,
-  workDate: "2022-03-01",
   shiftLength: 8,
   UserId: staff2.id,
   completed: true,
@@ -64,10 +48,8 @@ const insertSchedules = async (schedules) => {
 module.exports = {
   staff1Schedule1,
   staff1Schedule2,
-  staff1Schedule3,
   staff2Schedule1,
   staff2Schedule2,
-  staff2Schedule3,
   staff3Schedule3,
   insertSchedules,
 };

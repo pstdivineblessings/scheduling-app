@@ -13,7 +13,7 @@ db.sequelize.authenticate().then(async () => {
   logger.info("Connected to Mysql");
 
   server = app.listen(config.port, () => {
-    logger.info(`Listening to port ${config.port} --latest update`);
+    logger.info(`Listening to port -----  ${config.port} --latest update`);
   });
 });
 

@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  nodejs:
+    container_name: nodejs-app-dev
+    # command: ./wait-for.sh mysql-db:$MYSQL_PORT -- yarn dev -L 
+    command: yarn dev -L 

@@ -51,7 +51,7 @@ module.exports = {
   mysql: {
     host: envVars.MYSQL_HOST,
     user: envVars.MYSQL_USER,
-    password: envVars.MYSQL_USER,
+    password: envVars.MYSQL_PASSWORD,
     db: envVars.MYSQL_DB + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     port: envVars.MYSQL_PORT,
     dialect: envVars.MYSQL_DIALECT,

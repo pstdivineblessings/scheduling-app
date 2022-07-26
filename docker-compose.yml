@@ -1,55 +1,67 @@
-version: '3.7'
+version: '3'
 
 services:
-  mysql_db_container:
+
+  mysql-db:
+    container_name: mysql
     platform: linux/x86_64
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     # env_file: ./.env
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+    environment:  
+      # MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      # MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: Admin@22
       MYSQL_DATABASE: scheduling_db
-      # - MYSQL_USER: "${MYSQLDB_USER}"
-      # - MYSQL_ROOT_PASSWORD: "${MYSQLDB_ROOT_PASSWORD}"
-      # - MYSQL_DATABASE: "${MYSQLDB_DATABASE}"
     ports:
-      - 3306:3306
-      # - "${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}"
+      - "${MYSQL_HOST_PORT}:${MYSQL_PORT}"
+      # - "3306:3306"
     volumes:
-      - mysql_db_data_container:/var/lib/mysql
+      - mysql-db-data:/var/lib/mysql
+    networks:
+      - app-network      
 
-  adminer_container:
+  adminer:
     image: adminer:latest
-    # restart: always
-    # env_file: ./.env
+    container_name: adminer
+    restart: always
+    env_file: ./.env
     environment:
-      ADMINER_DEFAULT_SERVER: mysql_db_container
-    #   - ADMINER_DEFAULT_SERVER: "mysql_db_container"
-    #   # - ADMINER_DESIGN=$ADMINER_DESIGN    
+      ADMINER_DEFAULT_SERVER: mysql-db
     ports:
-      - 8080:8080
-      # - "${ADMINER_LOCAL_PORT}:${ADMINER_DOCKER_PORT}"
-      
+      - "${ADMINER_HOST_PORT}:${ADMINER_PORT}"
+    depends_on:
+      - mysql-db      
+    networks:
+      - app-network        
 
-  # app:
-  #   depends_on:
-  #     - mysqldb
-  #   build: ./scheduling-app
-  #   restart: unless-stopped
-  #   env_file: ./.env
-  #   ports:
-  #     - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
-  #   environment:
-  #     - DB_HOST=mysqldb
-  #     - DB_USER=$MYSQLDB_USER
-  #     - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-  #     - DB_NAME=$MYSQLDB_DATABASE
-  #     - DB_PORT=$MYSQLDB_DOCKER_PORT
-  #   stdin_open: true
-  #   tty: true
-  #   # volumes:
-  #   # - ./scheduling-app:./
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs-server
+    container_name: nodejs-app
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "${HOST_PORT}:${PORT}"
+    volumes:
+      - .:/usr/src/node-app
+      - node_modules:/usr/src/node-app/node_modules
+    networks:
+      - app-network
+    depends_on:
+      - mysql-db      
+    # command: ./wait-for.sh mysql-db:$MYSQL_PORT -- yarn dev -L
+    command: ./wait-for.sh mysql-db:3306 -- yarn dev -L
+    # command: yarn dev
 
-volumes: 
-  mysql_db_data_container:
+ 
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-db-data:
+  node_modules:  

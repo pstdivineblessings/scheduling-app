@@ -12,6 +12,7 @@ const sequelize = new Sequelize(
     dialect: config.mysql.dialect,
     // dialectOptions: {
     //   socketPath: '/var/run/mysqld/mysqld.sock',
+    //   // socketPath: '/tmp/mysql.sock',
     // },
     port: config.mysql.port,
     pool: {

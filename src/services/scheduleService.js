@@ -54,20 +54,24 @@ const createSchedule = async (scheduleData) => {
 };
 
 const updateScheduleById = async (id, scheduleData) => {
-  //Getting the schedule by id
-  const scheduleToUpdate = await Schedule.findByPk(id);
+  try {
+    //Getting the schedule by id
+    const scheduleToUpdate = await Schedule.findByPk(id);
 
-  if (!scheduleToUpdate) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      `No schedule found with this id = ${id}`
-    );
+    if (!scheduleToUpdate) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `No schedule found with this id = ${id}`
+      );
+    }
+
+    scheduleToUpdate.set(scheduleData);
+    await scheduleToUpdate.save();
+
+    return scheduleToUpdate;
+  } catch (err) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
   }
-
-  scheduleToUpdate.set(scheduleData);
-  await scheduleToUpdate.save();
-
-  return scheduleToUpdate;
 };
 
 const querySchedules = async (options) => {
