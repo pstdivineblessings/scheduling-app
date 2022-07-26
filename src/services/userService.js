@@ -1,7 +1,6 @@
 const httpStatus = require("http-status");
 const ApiError = require("../utils/ApiError");
 const bcrypt = require("bcrypt");
-const ROLES = require("../config/roles");
 const {
   isObjectEmpty,
   getPagination,
@@ -12,7 +11,6 @@ const db = require("../models");
 const { User } = db;
 const sq = db.sequelize;
 const { QueryTypes, Op } = require("sequelize");
-const { generateTokens } = require("../utils/jwt");
 
 /**
  * Get user by username
@@ -41,7 +39,6 @@ const getUserByRefreshToken = async (refreshToken) => {
 const isPasswordMatch = async (password1, password2) => {
   return bcrypt.compare(password1, password2);
 };
-
 
 /**
  * Get a new user
@@ -72,27 +69,6 @@ const createNew = async (userData) => {
   });
 
   return newUser;
-};
-
-/**
- * Signup user
- * @param {User} userData
- * @returns {Object}
- */
-const signup = async (userData) => {
-  userData.role  = ROLES.Staff
-
-  //Getting Tokens
-  const { accessToken, refreshToken } = generateTokens(userData);
-
-  userData.refreshToken = refreshToken;
-  const newUser = await createNew(userData);
-
-  const data = newUser.toJSON();
-  delete data.password;
-  delete data.refreshToken;
-
-  return { user: data, accessToken, refreshToken };
 };
 
 /**
@@ -165,7 +141,9 @@ const updateUserById = async (userId, updateBody) => {
   }
 
   const data = userToUpdate.toJSON();
+
   delete data.password;
+  delete data.refreshToken;
 
   return data;
 };
@@ -180,14 +158,14 @@ const queryUsers = async (options) => {
 
   if (!isUptoOneYear(startDate, endDate)) {
     throw new ApiError(
-      httpStatus.BAD_GATEWAY,
+      httpStatus.BAD_REQUEST,
       "The maximum period of time is one year."
     );
   }
 
   const { limit, offset } = getPagination(page, size);
 
-  console.log({ startDate, endDate, page, limit });
+  // console.log({ startDate, endDate, page, limit });
 
   const sqlQuery = `
       SELECT \`UserId\` as id, u.username, u.name, SUM(s.shiftLength) as workHours
@@ -240,6 +218,7 @@ const getUserById = async (id) => {
   const data = user.toJSON();
 
   delete data.password;
+  delete data.refreshToken;
 
   return data;
 };
@@ -262,8 +241,8 @@ const deleteUserById = async (id) => {
 };
 
 module.exports = {
-  signup,
   create,
+  createNew,
   getUserByRefreshToken,
   getUserByUsername,
   getUserById,

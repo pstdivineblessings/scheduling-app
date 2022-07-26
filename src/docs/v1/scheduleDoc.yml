@@ -113,16 +113,26 @@ paths:
                       properties:
                         id:
                           type: number
-                          example: 4
-                        username:
+                          example: 16
+                        workDate:
                           type: string
-                          example: staff3
-                        name:
+                          format: date
+                          example: 2022-05-01
+                        shiftLength:
+                          type: number
+                          example: 16
+                        completed:
+                          type: boolean
+                        UserId:
+                          type: number
+                          example: 12
+                        updatedAt:
                           type: string
-                          example: Staff user 3
-                        workHours:
+                          example: 2022-07-13T04:13:15.052Z
+                        createdAt:
                           type: string
-                          example: 48
+                          example: 2022-07-13T04:13:15.052Z
+
                   totalItems:
                     type: number
                     example: 100

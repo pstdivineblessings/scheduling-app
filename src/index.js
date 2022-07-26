@@ -3,6 +3,8 @@ const app = require("./app");
 const config = require("./config/config");
 const logger = require("./config/logger");
 
+const { truncateDb } = require("./utils/utils");
+
 let server;
 db.sequelize.authenticate().then(async () => {
   // db.sequelize.sync({ alter: true }).then(() => {

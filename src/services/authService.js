@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const userService = require("./userService");
 const { generateTokens } = require("../utils/jwt");
+const ROLES = require("../config/roles");
 
 /**
  * Signin user
@@ -31,7 +32,32 @@ const signin = async (username, password) => {
   foundUser.refreshToken = refreshToken;
   await foundUser.save();
 
-  return { refreshToken, accessToken };
+  const user = foundUser.toJSON();
+  delete user.password;
+  delete user.refreshToken;
+
+  return { user, refreshToken, accessToken };
+};
+
+/**
+ * Signup user
+ * @param {User} userData
+ * @returns {Object}
+ */
+const signup = async (userData) => {
+  userData.role = ROLES.Staff;
+
+  //Getting Tokens
+  const { accessToken, refreshToken } = generateTokens(userData);
+
+  userData.refreshToken = refreshToken;
+  const newUser = await userService.createNew(userData);
+
+  const data = newUser.toJSON();
+  delete data.password;
+  delete data.refreshToken;
+
+  return { user: data, accessToken, refreshToken };
 };
 
 /**
@@ -93,6 +119,7 @@ const refreshToken = async (refreshToken) => {
 
 module.exports = {
   signin,
+  signup,
   signout,
   refreshToken,
 };

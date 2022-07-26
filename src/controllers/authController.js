@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/catchAsync");
-const { authService, userService } = require("../services");
+const { authService } = require("../services");
 
 const signin = catchAsync(async (req, res) => {
   const { username, password } = req.body;
@@ -11,7 +11,7 @@ const signin = catchAsync(async (req, res) => {
 });
 
 const signup = catchAsync(async (req, res) => {
-  const result = await userService.signup(req.body);
+  const result = await authService.signup(req.body);
 
   res.status(httpStatus.CREATED).send(result);
 });

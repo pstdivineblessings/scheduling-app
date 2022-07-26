@@ -75,7 +75,7 @@ const querySchedules = async (options) => {
 
   if (!isUptoOneYear(startDate, endDate)) {
     throw new ApiError(
-      httpStatus.BAD_GATEWAY,
+      httpStatus.BAD_REQUEST,
       "The maximum period of time is one year."
     );
   }

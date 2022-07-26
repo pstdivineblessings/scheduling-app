@@ -19,7 +19,12 @@ const updateUser = {
   params: Joi.object().keys({
     id: Joi.number().required(),
   }),
-  body: userData,
+  body: Joi.object().keys({
+    username: Joi.string(),
+    password: Joi.string().custom(password),
+    role: Joi.string().valid(...Object.values(ROLES)),
+    name: Joi.string(),
+  }),
 };
 
 const getUsers = {

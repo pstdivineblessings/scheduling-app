@@ -20,6 +20,7 @@ const sequelize = new Sequelize(
       acquire: config.mysql.pool.acquire,
       idle: config.mysql.pool.idle,
     },
+    logging: config.env === "test" ? false : true,
   }
 );
 

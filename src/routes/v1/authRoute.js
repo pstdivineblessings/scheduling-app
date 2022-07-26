@@ -10,7 +10,7 @@ router.post("/signup", validate(authValidation.signup), authController.signup);
 router.post("/signin", validate(authValidation.signin), authController.signin);
 router.post(
   "/signout",
-  validate(authController.signout),
+  validate(authValidation.signout),
   authController.signout
 );
 router.post(

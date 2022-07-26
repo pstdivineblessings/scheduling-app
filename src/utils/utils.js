@@ -23,7 +23,7 @@ const getPagination = (page, size) => {
 
 const getPagingData = (data, totalItems, page, limit) => {
   // console.log({ totalData, data });
-  let  results = [],
+  let results = [],
     currentPage = page,
     totalPages = 0;
 
@@ -48,4 +48,18 @@ const isUptoOneYear = (starDate, endDate) => {
   return true;
 };
 
-module.exports = { isObjectEmpty, getPagination, getPagingData, isUptoOneYear };
+const truncateDb = async (db) => {
+  for (const modelName in db) {
+    if (modelName !== "sequelize" && modelName !== "Sequelize") {
+      await db[modelName].destroy({ where: {}, force: true });
+    }
+  }
+};
+
+module.exports = {
+  isObjectEmpty,
+  getPagination,
+  getPagingData,
+  isUptoOneYear,
+  truncateDb,
+};

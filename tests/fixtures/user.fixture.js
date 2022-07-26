@@ -1,39 +1,58 @@
-const db = require("../../src/models");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const faker = require("faker");
-const { adminRole, staffRole } = require("../fixtures/role.fixture");
-const { User, Role } = require("../../src/models");
+const { User } = require("../../src/models");
 
 const password = "Password@22";
 const salt = bcrypt.genSaltSync(8);
 const hashedPassword = bcrypt.hashSync(password, salt);
 
-const admin = await User.create({
+const admin = {
   id: 1,
   name: "Admin User",
   username: "admin",
+  role: "admin",
   password,
-});
-await admin.addRole(adminRole);
-await admin.addRole(adminRole);
+};
 
-
-const staff1 = User.create({
+const staff1 = {
   id: 2,
   name: faker.name.findName(),
   username: "staff1",
+  role: "staff",
   password,
-});
+};
+
+const staff2 = {
+  id: 3,
+  name: faker.name.findName(),
+  username: "staff2",
+  role: "staff",
+  password,
+};
+
+const staff3 = {
+  id: 4,
+  name: faker.name.findName(),
+  username: "staff3",
+  role: "staff",
+  password,
+};
 
 const insertUsers = async (users) => {
-  await User.insertMany(
+  await User.bulkCreate(
     users.map((user) => ({ ...user, password: hashedPassword }))
   );
 };
 
+const insertUser = async (user) => {
+  return await User.create({ ...user, password: hashedPassword });
+};
+
 module.exports = {
-  userOne,
-  userTwo,
   admin,
+  staff1,
+  staff2,
+  staff3,
   insertUsers,
+  insertUser,
 };
