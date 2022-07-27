@@ -25,7 +25,7 @@ services:
   adminer:
     image: adminer:latest
     container_name: adminer
-    restart: always
+    restart: unless-stopped
     env_file: ./.env
     environment:
       ADMINER_DEFAULT_SERVER: mysql-db
@@ -54,7 +54,7 @@ services:
     depends_on:
       - mysql-db      
     # command: ./wait-for.sh mysql-db:$MYSQL_PORT -- yarn dev -L
-    command: ./wait-for.sh mysql-db:3306 -- yarn dev -L
+    # command: ./wait-for.sh mysql-db:3306 -- yarn dev -L
     # command: yarn dev
 
  

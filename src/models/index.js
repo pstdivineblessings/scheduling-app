@@ -10,10 +10,9 @@ const sequelize = new Sequelize(
   {
     host: config.mysql.host,
     dialect: config.mysql.dialect,
-    // dialectOptions: {
-    //   socketPath: '/var/run/mysqld/mysqld.sock',
-    //   // socketPath: '/tmp/mysql.sock',
-    // },
+    dialectOptions: {
+      multipleStatements: true
+    },
     port: config.mysql.port,
     pool: {
       max: config.mysql.pool.max,

@@ -7,13 +7,13 @@ const { truncateDb } = require("./utils/utils");
 
 let server;
 db.sequelize.authenticate().then(async () => {
-  // db.sequelize.sync({ alter: true }).then(() => {
-  // db.sequelize.sync({ force: true }).then(() => {
+// db.sequelize.sync({ alter: true }).then(() => {
+// db.sequelize.sync({ force: true }).then(() => {
   // await db.sequelize.truncate({ cascade: true });
   logger.info("Connected to Mysql");
 
   server = app.listen(config.port, () => {
-    logger.info(`Listening to port -----  ${config.port} --latest update`);
+    logger.info(`Listening to port --- ${config.port} --latest update`);
   });
 });
 

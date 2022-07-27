@@ -3,13 +3,13 @@ const faker = require("faker");
 const { User } = require("../../src/models");
 
 const password = "Password@22";
-let salt, hashedPassword;
-(async () => {
-  salt = await bcrypt.genSalt(10);
-  hashedPassword = await bcrypt.hash(password, salt);
-})();
-// const salt = bcrypt.genSaltSync(8);
-// const hashedPassword = bcrypt.hashSync(password, salt);
+// let salt, hashedPassword;
+// (async () => {
+//   salt = await bcrypt.genSalt(10);
+//   hashedPassword = await bcrypt.hash(password, salt);
+// })();
+const salt = bcrypt.genSaltSync(8);
+const hashedPassword = bcrypt.hashSync(password, salt);
 
 const admin = {
   id: 1,
