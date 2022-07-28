@@ -165,14 +165,16 @@ const queryUsers = async (options) => {
 
   const { limit, offset } = getPagination(page, size);
 
-  // console.log({ startDate, endDate, page, limit });
-
   const sqlQuery = `
-      SELECT \`UserId\` as id, u.username, u.name, SUM(s.shiftLength) as workHours
-      FROM \`Schedules\` s, \`Users\` u
-      WHERE  u.id = s.UserId
-      AND s.workDate BETWEEN :startDate AND :endDate
-      GROUP BY UserId
+      SELECT 
+        u.id, u.username, u.name,
+        (
+          SELECT IFNULL(SUM(s.shiftLength), 0) 
+          FROM  \`Schedules\` s
+          WHERE u.id = s.UserId
+          AND s.workDate BETWEEN :startDate AND :endDate
+        ) as workHours
+      FROM  \`Users\` u
       ORDER BY workHours DESC
     `;
 
