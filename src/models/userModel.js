@@ -53,6 +53,14 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
   };
+  
+  User.prototype.toJSON =  function () {
+    var values = Object.assign({}, this.get());
+  
+    delete values.password;
+    delete values.refreshToken;
+    return values;
+  }  
 
   return User;
 };

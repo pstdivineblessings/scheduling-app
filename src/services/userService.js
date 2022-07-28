@@ -82,10 +82,7 @@ const create = async (userData) => {
   //Saving in the DB
   await newUser.save();
 
-  const data = newUser.toJSON();
-  delete data.password;
-
-  return data;
+  return newUser.toJSON() ;
 };
 
 /**
@@ -140,12 +137,7 @@ const updateUserById = async (userId, updateBody) => {
     await userToUpdate.save();
   }
 
-  const data = userToUpdate.toJSON();
-
-  delete data.password;
-  delete data.refreshToken;
-
-  return data;
+  return userToUpdate.toJSON();
 };
 
 /**
@@ -217,12 +209,7 @@ const getUserById = async (id) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "No user found with id=" + id);
   }
 
-  const data = user.toJSON();
-
-  delete data.password;
-  delete data.refreshToken;
-
-  return data;
+  return  user.toJSON();
 };
 
 /**

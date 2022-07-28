@@ -33,8 +33,6 @@ const signin = async (username, password) => {
   await foundUser.save();
 
   const user = foundUser.toJSON();
-  delete user.password;
-  delete user.refreshToken;
 
   return { user, refreshToken, accessToken };
 };
@@ -54,8 +52,6 @@ const signup = async (userData) => {
   const newUser = await userService.createNew(userData);
 
   const data = newUser.toJSON();
-  delete data.password;
-  delete data.refreshToken;
 
   return { user: data, accessToken, refreshToken };
 };
