@@ -4,4 +4,4 @@ services:
   nodejs:
     container_name: nodejs-app-test
     # command: ./wait-for.sh mysql-db:$MYSQL_PORT -- yarn test 
-    command: yarn test
+    command: yarn test:watch

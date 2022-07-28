@@ -227,7 +227,7 @@ describe("User routes", () => {
         results: expect.any(Array),
         currentPage: 1,
         totalPages: 2,
-        totalItems: 3,
+        totalItems: 4,
       });
 
       expect(res.body.results).toHaveLength(2);
@@ -245,6 +245,39 @@ describe("User routes", () => {
       //   name: staff2.name,
       //   workHours: "8",
       // });
+    });
+
+    test("should return the correct page specified", async () => {
+      const res = await request(app)
+        .get(apiRoute)
+        .set("Authorization", `Bearer ${adminAccessToken}`)
+        .query({ ...options, page: 2 })
+        .send()
+        .expect(httpStatus.OK);
+
+      expect(res.body).toEqual({
+        results: expect.any(Array),
+        currentPage: 2,
+        totalPages: 2,
+        totalItems: 4,
+      });
+
+      expect(res.body.results).toHaveLength(2);
+
+      expect(res.body.results[0]).toEqual({
+        id: expect.anything(),
+        username: staff3.username,
+        name: staff3.name,
+        workHours: "8",
+      });
+
+      expect(res.body.results[1]).toEqual({
+        id: expect.anything(),
+        username: admin.username,
+        name: admin.name,
+        workHours: "0",
+      });
+
     });
 
     test("should return 403 error if access token is missing", async () => {
@@ -267,33 +300,7 @@ describe("User routes", () => {
         .query({ ...options })
         .send()
         .expect(httpStatus.UNAUTHORIZED);
-    });
-
-    test("should return the correct page specified", async () => {
-      const res = await request(app)
-        .get(apiRoute)
-        .set("Authorization", `Bearer ${adminAccessToken}`)
-        .query({ ...options, page: 2 })
-        .send()
-        .expect(httpStatus.OK);
-
-      expect(res.body).toEqual({
-        results: expect.any(Array),
-        currentPage: 2,
-        totalPages: 2,
-        totalItems: 3,
-      });
-
-      expect(res.body.results).toHaveLength(1);
-      // console.log(res.body);
-
-      expect(res.body.results[0]).toEqual({
-        id: expect.anything(),
-        username: staff3.username,
-        name: staff3.name,
-        workHours: "8",
-      });
-    });
+    });    
 
     test("should return 400 error if the period of time is not provided or is incorrect", async () => {
       //Testing empty startDate and endDate
