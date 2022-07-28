@@ -18,13 +18,10 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
-    "date-fns": "^2.23.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-joi-validate": "^3.0.1",
-    "express-rate-limit": "^5.0.0",
     "helmet": "^4.1.0",
     "http-status": "^1.4.0",
     "joi": "^17.3.0",
@@ -33,7 +30,6 @@
     "sequelize": "^6.21.1",
     "swagger-jsdoc": "^6.0.8",
     "swagger-ui-express": "^4.1.6",
-    "uuid": "^8.3.2",
     "winston": "^3.2.1",
     "xss-clean": "^0.1.1"
   },

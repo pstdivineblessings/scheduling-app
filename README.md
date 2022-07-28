@@ -172,8 +172,9 @@ src\
 
 
 
-## TODOs: Things to improve in the current project implementation
+## TODOs: Things to improve or add in the current project implementation
 
-- Implement private fields from schema to remove fields like `password`, `createdAt`, `updatedAt` from api call. (There are plugins for that)
-- Add a strong mechanism for refreshToken process
+- Implement rate limit for public endpoints such as authentication
+- Add a stronger mechanism for refreshToken process with related tests
+
 
